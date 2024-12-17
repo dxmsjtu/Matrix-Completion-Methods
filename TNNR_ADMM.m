@@ -1,13 +1,8 @@
 function TNNR_recon = TNNR_ADMM(mask_image,mask,beta,r,maxIter,tol)
-%
 % This code implements the TNNR-ADMM algorithm
-%
 % More information about TNNR-ADMM can be found in the paper:
-%    Hu, Yao and Zhang, Debing and Ye, Jieping and Li, Xuelong and He, Xiaofei, 
-%    "Fast and accurate matrix completion via truncated nuclear norm regularization", 
+%    Hu, Yao and Zhang, Debing and Ye, Jieping and Li, Xuelong and He, Xiaofei,    "Fast and accurate matrix completion via truncated nuclear norm regularization", 
 %    IEEE transactions on pattern analysis and machine intelligence, 2012.
-%
-%
 % Inputs:
 %    mask_image:  sampled image
 %    mask:  sampled set
@@ -18,7 +13,6 @@ function TNNR_recon = TNNR_ADMM(mask_image,mask,beta,r,maxIter,tol)
 %
 % Outputs:
 %    TNNR_recon:  recovered image, obtained by TNNR-ADMM
-%
 % Author: Hao Liang 
 % Last modified by: 21/09/13
 %
@@ -40,7 +34,8 @@ for iter = 1:maxIter
     Bl = (V1(:,1:r )).';
     
     % Update W
-    W = X+(1/beta)*(Y+Al.'*Bl); W(PICKS) = mask_image(PICKS);
+    W = X+(1/beta)*(Y+Al.'*Bl);
+    W(PICKS) = mask_image(PICKS);
     
     % Update Y
     Y = Y+beta*(X-W);
@@ -49,11 +44,7 @@ for iter = 1:maxIter
     TOLL = norm(X-Xtemp,'fro')/norm(X,'fro');
     if TOLL<=tol
         break;
-    end
-    
+    end    
 end
-
 TNNR_recon = X;
-
 end
-

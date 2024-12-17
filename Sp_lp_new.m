@@ -1,14 +1,8 @@
 function Sp_lp_new_recon = Sp_lp_new(mask_image,mask,gamma,p1,p2,maxIter,tol)
-%
-% This code implements the Sp-lp-new algorithm
-%
-% More information about Sp-lp-new can be found in the paper:
-%    Nie, Feiping and Wang, Hua and Huang, Heng and Ding, Chris, 
-%    "Joint Schatten p-norm and lp-norm robust matrix completion for missing value recovery", 
+% This code implements the Sp-lp-new algorithm More information about Sp-lp-new can be found in the paper:
+%    Nie, Feiping and Wang, Hua and Huang, Heng and Ding, Chris,     "Joint Schatten p-norm and lp-norm robust matrix completion for missing value recovery", 
 %    Knowledge and Information Systems, 2015.
-%
-%
-% Inputs:
+%% Inputs:
 %    mask_image:  sampled image
 %    mask:  sampled set
 %    gamma: regularization parameter
@@ -43,36 +37,31 @@ E = zeros(nx,ny); Z = zeros(nx,ny);
 
 for i = 1:maxIter   
     % Update X
-    N = Z-Sigma/miu; M = E+mask_image+Lamda/miu;
+    N = Z-Sigma/miu; 
+    M = E+mask_image+Lamda/miu;
     Xtemp = X;
     X(idx) = (N(idx)+M(idx))/2; X(idx1) = N(idx1);
-    TOLL = norm(X-Xtemp,'fro')/max(norm(X,'fro'),1);
-      
+    TOLL = norm(X-Xtemp,'fro')/max(norm(X,'fro'),1);      
     % Stopping criteria
     if TOLL<=tol
         break;
-    end
-    
+    end    
     % Update E
     H = X-mask_image-Lamda/miu;
     for j = 1:length(idx)
         E(idx(j)) = solve_subproblem_11(H(idx(j)), 2/miu, p1);
-    end
-    
+    end   
     % Update Z
     G = X + Sigma/miu; [U,S,V] = svd(G,0);
     s = diag(S); 
     for j = 1:length(s)
         s(j) = solve_subproblem_12(s(j),2*gamma/miu, p2);
     end   
-    Z = U*diag(s)*V';
-    
+    Z = U*diag(s)*V';    
     % Update Lamda
-    Lamda = Lamda + miu*(E-X+mask_image);
-    
+    Lamda = Lamda + miu*(E-X+mask_image);    
     % Update Sigma
-    Sigma = Sigma + miu*(X-Z);
-    
+    Sigma = Sigma + miu*(X-Z);    
     % Update miu
     miu = miu*rho;
 end
@@ -80,7 +69,6 @@ end
 if transpose == 1
     X = X.';
 end
-
 Sp_lp_new_recon = X;
 
 end
@@ -128,10 +116,7 @@ end
 
 
 function sigma = solve_subproblem_12(alpha, lambda, p)
-
-% Solving the subproblem (12), i.e.,
-%    min_{sigma>=0}  (sigma-a)^2 + lambda*|sigma|^p
-
+% Solving the subproblem (12), i.e.,    min_{sigma>=0}  (sigma-a)^2 + lambda*|sigma|^p
 a = (lambda*p*(1-p)/2)^(1/(2-p))+eps;
 b = 2*a-2*alpha+lambda*p*a^(p-1);
 if b < 0

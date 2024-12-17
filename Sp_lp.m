@@ -1,14 +1,8 @@
 function Sp_lp_recon = Sp_lp(mask_image,mask,gamma,p,maxIter,tol)
-%
 % This code implements the Sp-lp algorithm
-%
-% More information about Sp-lp can be found in the paper:
-%    Nie, Feiping and Wang, Hua and Cai, Xiao and Huang, Heng and Ding, Chris, 
-%    "Robust matrix completion via joint schatten p-norm and lp-norm minimization", 
-%    2012 IEEE 12th International Conference on Data Mining, 2012.
-%
-%
-% Inputs:
+% More information about Sp-lp can be found in the paper:    Nie, Feiping and Wang, Hua and Cai, Xiao and Huang, Heng and Ding, Chris, 
+%    "Robust matrix completion via joint schatten p-norm and lp-norm minimization",     2012 IEEE 12th International Conference on Data Mining, 2012.
+%% Inputs:
 %    mask_image:  sampled image
 %    mask:  sampled set
 %    gamma: regularization parameter
@@ -18,11 +12,8 @@ function Sp_lp_recon = Sp_lp(mask_image,mask,gamma,p,maxIter,tol)
 %
 % Outputs:
 %    Sp_lp_recon:  recovered image, obtained by Sp-lp
-%
 % Author: Hao Liang 
 % Last modified by: 21/09/13
-%
-
 % When the image has fewer rows than columns, transpose the image
 [nx,ny] = size(mask_image); transpose = 0;
 if nx < ny
@@ -42,9 +33,11 @@ E = zeros(nx,ny); Z = zeros(nx,ny);
 
 for i = 1:maxIter   
     % Update X
-    N = Z-Sigma/miu; M = E+mask_image+Lamda/miu;
+    N = Z-Sigma/miu; 
+    M = E+mask_image+Lamda/miu;
     Xtemp = X;
-    X(idx) = (N(idx)+M(idx))/2; X(idx1) = N(idx1);
+    X(idx) = (N(idx)+M(idx))/2; 
+    X(idx1) = N(idx1);
     TOLL = norm(X-Xtemp,'fro')/max(norm(X,'fro'),1);
       
     % Stopping criteria
@@ -59,7 +52,8 @@ for i = 1:maxIter
     end
     
     % Update Z
-    G = X + Sigma/miu; [U,S,V] = svd(G,0);
+    G = X + Sigma/miu; 
+    [U,S,V] = svd(G,0);
     s = diag(S); 
     for j = 1:length(s)
         s(j) = solve_subproblem_12(s(j),2*gamma/miu, p);
@@ -86,9 +80,7 @@ end
 
 
 function x = solve_subproblem_11(alpha, lambda, p)
-
-% Solving the subproblem (11), i.e.,
-%    min_{x}  (x-alpha)^2 + lambda*|x|^p
+% Solving the subproblem (11), i.e.,    min_{x}  (x-alpha)^2 + lambda*|x|^p
 
 a = (lambda*p*(1-p)/2)^(1/(2-p))+eps;
 b = 2*a-2*alpha+lambda*p*a^(p-1);
@@ -127,10 +119,7 @@ end
 
 
 function sigma = solve_subproblem_12(alpha, lambda, p)
-
-% Solving the subproblem (12), i.e.,
-%    min_{sigma>=0}  (sigma-a)^2 + lambda*|sigma|^p
-
+% Solving the subproblem (12), i.e.,    min_{sigma>=0}  (sigma-a)^2 + lambda*|sigma|^p
 a = (lambda*p*(1-p)/2)^(1/(2-p))+eps;
 b = 2*a-2*alpha+lambda*p*a^(p-1);
 if b < 0
